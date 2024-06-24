@@ -81,7 +81,7 @@ conn.on('ready', () => {
       })
       console.log('Archivos encontrados con los patrones:', listaADescargar.map(item => item.filename).join(', '))
 
-      let count = listaADescargar.length
+      const count = listaADescargar.length
       if (count === 0) {
         console.log('No hay archivos para descargar')
         console.log('Archivos en directorio:', allFiles.map(item => item.filename).join(', '))
@@ -89,7 +89,16 @@ conn.on('ready', () => {
         return
       }
 
-      listaADescargar.forEach(item => {
+      /**
+       * @param {import('ssh2').FileEntryWithStats[]} fileEntries
+       * @param {number} position
+       */
+      const executeAction = (fileEntries, position) => {
+        const item = fileEntries.at(position)
+        if (!item) {
+          conn.end()
+          return
+        }
         const remoteFile = path.posix.join(REMOTE_DIR, item.filename)
         const localFile = path.join(LOCAL_DIR, item.filename)
         console.log(`Downloading ${remoteFile}`)
@@ -110,13 +119,13 @@ conn.on('ready', () => {
               throw errUnlink
             }
             console.log(`Deleted file: ${remoteFile}`)
-            count--
-            if (count <= 0) {
-              conn.end()
-            }
+
+            executeAction(fileEntries, position + 1)
           })
         })
-      })
+      }
+
+      executeAction(listaADescargar, 0)
     })
   })
 })
