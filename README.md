@@ -30,6 +30,10 @@ cd definedActions/downloadSftpFiles
 pnpm install
 
 cd ../../
+cd definedActions/clearSftpFiles
+pnpm install
+
+cd ../../
 pm2 start pm2.config.js
 
 ```

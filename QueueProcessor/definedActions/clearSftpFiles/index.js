@@ -89,45 +89,6 @@ conn.on('ready', () => {
         const localFile = path.join(LOCAL_DIR, item.filename)
         console.log(`Downloading ${remoteFile}`)
 
-        // victor download method
-        // sftp.readFile(remoteFile, (err, data) => {
-        //   if (err) throw err
-        //   fs.writeFile(localFile, data, (err) => {
-        //     if (err) throw err
-        //     console.log('Downloaded to ' + localFile)
-        //     count--
-        //     if (count <= 0) {
-        //       conn.end()
-        //     }
-        //   })
-        // })
-
-        // download file using stream
-        // const wtr = fs.createWriteStream(localFile, { autoClose: true })
-        // const rdr = sftp.createReadStream(remoteFile, { autoClose: true })
-        // rdr.once('error', (err) => {
-        //   console.error('Error downloading file: ' + err)
-        //   count--
-        //   if (count <= 0) {
-        //     conn.end()
-        //   }
-        // })
-        // wtr.once('error', (err) => {
-        //   console.error('Error writing file: ' + err)
-        //   count--
-        //   if (count <= 0) {
-        //     conn.end()
-        //   }
-        // })
-        // rdr.once('end', () => {
-        //   console.log('Downloaded to ' + localFile)
-        //   count--
-        //   if (count <= 0) {
-        //     conn.end()
-        //   }
-        // })
-        // rdr.pipe(wtr)
-
         // normal download
         sftp.fastGet(remoteFile, localFile, errFastGet => {
           if (errFastGet) {
@@ -136,10 +97,19 @@ conn.on('ready', () => {
             throw errFastGet
           }
           console.log(`Downloaded to ${localFile}`)
-          count--
-          if (count <= 0) {
-            conn.end()
-          }
+
+          sftp.unlink(remoteFile, errUnlink => {
+            if (errUnlink) {
+              console.log(`Error deleting file: ${remoteFile}`)
+              conn.end()
+              throw errUnlink
+            }
+            console.log(`Deleted file: ${remoteFile}`)
+            count--
+            if (count <= 0) {
+              conn.end()
+            }
+          })
         })
       })
     })
