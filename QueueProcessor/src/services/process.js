@@ -123,7 +123,7 @@ const registerProcessStatus = async (collection, processId, status) => {
         $each: [
           {
             status,
-            processorId: PROCESSOR_ID,
+            processorId: QUEUE_PROCESSOR_ID,
             timestamp: new Date(),
             nextReevaluation: null,
           },
