@@ -1,7 +1,7 @@
 const { MongoClient } = require('mongodb')
 const { Collection, ObjectId } = require('mongodb')
 
-const { PROCESSOR_ID } = require('../consts')
+const { QUEUE_PROCESSOR_ID } = require('../consts')
 
 /**
  * @param {Collection<import('../process').Process>} collection
@@ -19,7 +19,7 @@ const buscarProcesoYActualizarEstado = async collection => collection.findOneAnd
       $each: [
         {
           status: 'processing',
-          processorId: PROCESSOR_ID,
+          processorId: QUEUE_PROCESSOR_ID,
           timestamp: new Date(),
           nextReevaluation: null,
         },
