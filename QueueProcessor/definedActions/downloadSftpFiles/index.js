@@ -6,6 +6,7 @@ const { _ACTION_TMP } = process.env
 const REMOTE_DIR = process.env.remoteDirectory
 const LOCAL_DIR = process.env.localDirectory ?? _ACTION_TMP
 const HOST = process.env.host
+const PORT = process.env.port ?? '22'
 const USERNAME = process.env.username
 const PASSWORD = process.env.password
 const FILE_PATTERNS = process.env.filePatterns ?? ''
@@ -19,6 +20,9 @@ if (!LOCAL_DIR) {
 }
 if (!HOST || !USERNAME) {
   throw new Error('host and username are required')
+}
+if (Number.isNaN(+PORT)) {
+  throw new Error('port must be a number')
 }
 if (!FILE_PATTERNS) {
   throw new Error('filesPatterns is required')
@@ -35,6 +39,7 @@ const failIfNoFiles = FAIL_IF_NO_FILES === 'true'
 /** @type {import('ssh2').ConnectConfig} */
 const credentials = {
   host: HOST,
+  port: +PORT,
   username: USERNAME,
   password: PASSWORD,
 }
