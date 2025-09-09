@@ -1,4 +1,4 @@
-# VMAS-ACTIONS
+# SIMPLE-ACTIONS
 
 ```
 # WorkflowDispatcher Configuration
